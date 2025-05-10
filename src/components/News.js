@@ -23,12 +23,24 @@ const News = (props) => {
     props.setProgress(0);
     const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=031176a102734f768c19459b50f55074&page=${page}&pageSize=${props.pageSize}`;
     setLoading(true);
-    let data = await fetch(url);
-    props.setProgress(30);
-    let parsedData = await data.json();
-    props.setProgress(70);
-    setArticles(parsedData.articles);
-    setTotalResults(parsedData.totalResults);
+    try {
+      const data = await fetch(url);
+      props.setProgress(30);
+      const parsedData = await data.json();
+      props.setProgress(70);
+      if (parsedData.status === 'ok' && Array.isArray(parsedData.articles)) {
+        setArticles(parsedData.articles);
+        setTotalResults(parsedData.totalResults);
+      } else {
+        console.error('API error:', parsedData);
+        setArticles([]);
+        setTotalResults(0);
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      setArticles([]);
+      setTotalResults(0);
+    }
     setLoading(false);
     props.setProgress(100);
   };
@@ -37,10 +49,18 @@ const News = (props) => {
     const nextPage = page + 1;
     const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=031176a102734f768c19459b50f55074&page=${nextPage}&pageSize=${props.pageSize}`;
     setPage(nextPage);
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    setArticles(articles.concat(parsedData.articles));
-    setTotalResults(parsedData.totalResults);
+    try {
+      const data = await fetch(url);
+      const parsedData = await data.json();
+      if (parsedData.status === 'ok' && Array.isArray(parsedData.articles)) {
+        setArticles(articles.concat(parsedData.articles));
+        setTotalResults(parsedData.totalResults);
+      } else {
+        console.error('API error during fetchMoreData:', parsedData);
+      }
+    } catch (error) {
+      console.error('Network error during fetchMoreData:', error);
+    }
   };
 
   return (
@@ -48,7 +68,13 @@ const News = (props) => {
       <h1 className="text-center my-3">
         <strong>Top {capitalizeFirstLetter(props.category)} Headlines</strong>
       </h1>
+
       {loading && <Spinner />}
+
+      {!loading && articles.length === 0 && (
+        <p className="text-center">No news articles found. Please try again later.</p>
+      )}
+
       <InfiniteScroll
         style={{ overflow: 'hidden' }}
         dataLength={articles.length}
@@ -71,7 +97,7 @@ const News = (props) => {
                   newsUrl={element.url}
                   author={element.author}
                   date={element.publishedAt}
-                  source={element.source.name}
+                  source={element.source?.name || 'Unknown'}
                 />
               </div>
             ))}
@@ -83,7 +109,7 @@ const News = (props) => {
 };
 
 News.defaultProps = {
-  pageSize:9,
+  pageSize: 9,
   country: 'us',
   category: 'general',
 };
