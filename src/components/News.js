@@ -15,7 +15,7 @@ return string?.charAt(0).toUpperCase() + string?.slice(1);
 document.title = `${capitalizeFirstLetter(props.category)} - News`
 const updateNews = async () => {
 props.setProgress(0)
-const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=031176a102734f768c19459b50f55074&page=${page}&PageSize=${props.pageSize}`;
+const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=031176a102734f768c19459b50f55074&page=${page}&pageSize=${props.pageSize}`;
 setLoading(true);
 let data = await fetch(url);
 props.setProgress(30)
@@ -40,7 +40,7 @@ updateNews();
 //   updateNews()
 // }
 const fetchMoreData = async () => {
-const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=031176a102734f768c19459b50f55074&page=${page + 1}&PageSize=${props.pageSize}`;
+const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=031176a102734f768c19459b50f55074&page=${page + 1}&pageSize=${props.pageSize}`;
 setPage(page + 1)
 // setLoading(true);
 let data = await fetch(url);
