@@ -21,7 +21,7 @@ const News = (props) => {
 
   const updateNews = async () => {
     props.setProgress(0);
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=031176a102734f768c19459b50f55074&page=${page}&pageSize=${props.pageSize}`;
+    const url = `https://gnews.io/api/v4/search?q=example&lang=hi&country=in&max=10&apikey=7fae11813472da351be7e04fba89c5ae`;
     setLoading(true);
     try {
       const data = await fetch(url);
@@ -47,7 +47,7 @@ const News = (props) => {
 
   const fetchMoreData = async () => {
     const nextPage = page + 1;
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=031176a102734f768c19459b50f55074&page=${nextPage}&pageSize=${props.pageSize}`;
+    const url =`https://gnews.io/api/v4/search?q=example&lang=hi&country=in&max=10&apikey=7fae11813472da351be7e04fba89c5ae`;
     setPage(nextPage);
     try {
       const data = await fetch(url);
